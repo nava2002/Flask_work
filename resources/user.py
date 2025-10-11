@@ -26,7 +26,7 @@ class UserRegister(MethodView):
         except IntegrityError:
             abort(409,message="A user with that username already exist.")
         except SQLAlchemyError as e:
-            abort(500,message=e)
+            abort(500,message=str(e))
         return {"message":"The user was registered successfully registered."}, 200
     
 
