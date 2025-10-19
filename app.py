@@ -1,10 +1,12 @@
 import os
+import redis
 #import secrets
 
 from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
+from rq import Queue
 
 from blocklist import BLOCKLIST
 from db import db
@@ -18,6 +20,8 @@ from resources.user import blp as UserBlueprint
 def create_app(db_url=None):
     app = Flask(__name__)
 
+    connection = redis.from_url(os.getenv("REDIS_URL"))
+    app.queue = Queue("emails",connection=connection)
     app.config["PROPAGATE_EXCEPTIONS"] = True #Any exceptions hidden inside the extension of falsk will be propogated to the main app so we can see it
     app.config["API_TITLE"] = "Store REST API"#Titile of the API in the documentaiton
     app.config["API_VERSION"] = "v1"
